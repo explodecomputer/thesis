@@ -1,0 +1,256 @@
+% Use the "Thesis" style, based on the ECS Thesis style by Steve Gunn
+\documentclass[a4paper, 11pt, oneside]{Thesis}
+\pdfminorversion=5 % stop pdflatex worrying about 1.5 version pdfs
+\graphicspath{{Figures/}} % Location of the graphics files (set up for graphics to be in PDF format)
+\usepackage[utf8]{inputenc} %useful to type directly accentuated characters undefined method `context' for nil:NilClass
+
+% For source code
+\newenvironment{mytinylisting}
+{\begin{list}{}{\setlength{\leftmargin}{1em}}\item\tiny\bfseries}
+{\end{list}}
+
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+\usepackage{lscape}
+\usepackage{verbatim}
+\usepackage{float} % for [H]ere
+\usepackage{vector}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{rotating}
+\usepackage{sectsty}
+\usepackage{arydshln} % for dashed rules in tables
+\usepackage{url}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{threeparttable}
+\usepackage[table]{xcolor}
+\definecolor{tableShade}{HTML}{F1F5FA}
+%\usepackage[square, authoryear]{natbib}
+\usepackage[sort&compress]{natbib}
+% \usepackage{lineno}
+% \linenumbers
+\usepackage{arabtex}
+\allsectionsfont{\sffamily}
+%\renewcommand\familydefault{cmss}
+
+
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.95}
+\renewcommand{\floatpagefraction}{0.35}
+\setcounter{totalnumber}{5}
+
+
+%% ----------------------------------------------------------------
+\begin{document}
+
+\frontmatter  % Begin Roman style (i, ii, iii, iv...) page numbering
+
+\title  {Dissecting genetic interactions in complex traits}
+\authors  {\texorpdfstring
+           {\href{gib.hemani@roslin.ed.ac.uk}{Gibran Hemani}}
+           {Author Name}
+           }
+\addresses  {\groupname\\\deptname\\\univname}
+\date{\today}
+\subject{}
+\keywords{}
+\maketitle
+
+\setstretch{1.6}
+
+% Define the page headers using the FancyHdr package and set up for one-sided printing
+\fancyhead{}  % Clears all page headers and footers
+\rhead{\thepage}
+\lhead{}
+
+\pagestyle{fancy}
+
+\Declaration{
+I, Gibran Hemani, declare that this thesis titled, `Dissecting genetic interactions in complex traits' and the work presented in it are my own. I confirm that:
+
+\begin{itemize}
+\item[\tiny{$\blacksquare$}] No part of this thesis has previously been submitted for a degree or any other qualification at this University or any other institution.
+
+\item[\tiny{$\blacksquare$}] Where I have consulted the published work of others, this is always clearly attributed.
+
+\item[\tiny{$\blacksquare$}] Where I have quoted from the work of others, the source is always given. With the exception of such quotations, this thesis is entirely my own work.
+
+\item[\tiny{$\blacksquare$}] I have acknowledged all main sources of help.
+
+\item[\tiny{$\blacksquare$}] Where the thesis is based on work done by myself jointly with others, I have made clear exactly what was done by others and what I have contributed myself.
+\\
+\end{itemize}
+
+
+Signed:\\
+\rule[1em]{25em}{0.5pt}
+
+Date:\\
+\rule[1em]{25em}{0.5pt}
+}
+\clearpage
+
+
+
+\pagestyle{empty}  % No headers or footers for the following pages
+\null\vfill
+\textit{``For every complex problem there is a solution that is simple, neat, and wrong.''}
+\begin{flushright}
+H. L. Mencken
+\end{flushright}
+\vfill\vfill\vfill\vfill\vfill\vfill\null
+\clearpage
+
+
+\addtotoc{Abstract}
+\setstretch{1}  
+\abstract{\small{
+Of central importance in the dissection of the components that govern complex traits is understanding the architecture of natural genetic variation. Genetic interaction, or epistasis, constitutes one aspect of this, but epistatic analysis has been largely avoided in genome wide association studies because of statistical and computational difficulties. This thesis explores both issues in the context of two-locus interactions.
+
+Initially, through simulation and deterministic calculations it was demonstrated that not only can epistasis maintain deleterious mutations at intermediate frequencies when under selection, but that it may also have a role in the maintenance of additive variance. Based on the epistatic patterns that are evolutionarily persistent, and the frequencies at which they are maintained, it was shown that exhaustive two dimensional search strategies are the most powerful approaches for uncovering both additive variance and the other genetic variance components that are co-precipitated.
+
+However, while these simulations demonstrate encouraging statistical benefits, two dimensional searches are often computationally prohibitive, particularly with the marker densities and sample sizes that are typical of genome wide association studies. To address this issue different software implementations were developed to parallelise the two dimensional triangular search grid across various types of high performance computing hardware. Of these, particularly effective was using the massively-multi-core architecture of consumer level graphics cards. While the performance will continue to improve as hardware improves, at the time of testing the speed was 2-3 orders of magnitude faster than CPU based software solutions that are in current use.
+
+Not only does this software enable epistatic scans to be performed routinely at minimal cost, but it is now feasible to empirically explore the false discovery rates introduced by the high dimensionality of multiple testing. Through permutation analysis it was shown that the significance threshold for epistatic searches is a function of both marker density and population sample size, and that because of the correlation structure that exists between tests the threshold estimates currently used are overly stringent.
+
+Although the relaxed threshold estimates constitute an improvement in the power of two dimensional searches, detection is still most likely limited to relatively large genetic effects. Through direct calculation it was shown that, in contrast to the additive case where the decay of estimated genetic variance was proportional to falling linkage disequilibrium between causal variants and observed markers, for epistasis this decay was exponential. One way to rescue poorly captured causal variants is to parameterise association tests using haplotypes rather than single markers. A novel statistical method that uses a regularised parameter selection procedure on two locus haplotypes was developed, and through extensive simulations it can be shown that it delivers a substantial gain in power over single marker based tests.
+
+Ultimately, this thesis seeks to demonstrate that many of the obstacles in epistatic analysis can be ameliorated, and with the current abundance of genomic data gathered by the scientific community direct search may be a viable method to qualify the importance of epistasis.
+}}
+\clearpage
+
+
+\acknowledgements{
+
+For the duration of my studies I have received support, direction and inspiration from many people, and expressing the depth of my gratitude to them is proving to be an intractable problem.
+
+My thanks to:\\
+Chris Haley and Sara Knott, who gave me the opportunity to do this work, were extremely generous with their time, and offered advice, wisdom, and perspective;\\
+John Woolliams, whose guidance was invaluable;\\
+Ricardo Pong-Wong, who I have asked for help one thousand times and he has never been too busy;\\
+Thanasis Theocharidis, Wenhua Wei, and Ian Handel, with whom I could talk about things that nobody else would talk to me about (computers);\\
+the mysterious keepers of {\tt eddie} and {\tt cseht};\\
+BBSRC, The Roslin Institute, Biosciences KTN, and Archie Clutter for the funding;\\
+my friends, because you are all very distracting;\\
+my family: Arman, Noor, and my wonderful parents.
+
+
+%My advisers are pretty cool even though they are married and so thanks a lot. Also Ricardo. And my family, especially Arman for drinking coffee so I don't have to. I'd also like to acknowledge the city of Edinburgh for being so grey all the time and encouraging me to get my work done. And my computers for not crashing too much. And the large number of people that allow nettles to grow around here so that I have something to eat.  Thanks.
+
+}
+
+\clearpage
+
+
+
+\setstretch{1}
+\lhead{\emph{List of Publications}}
+\listofpublications
+{
+Hemani G, Knott SA, Haley CS.\\
+\textbf{An evolutionary perspective on epistasis and the missing heritability}.\\
+In preparation. \\[.3cm]
+Hemani G, Knott SA, Haley CS.\\
+\textbf{Improvements in the power to detect epistasis through the use of haplotypes}.\\
+In preparation. \\[.3cm]
+Hemani G, Haley CS.\\
+\textbf{Empirical estimates of significance thresholds for genome-wide searches for epistasis}.\\
+In preparation. \\[.3cm]
+French AT, Ogden R, Eland C, Hemani G, Pong-Wong R, Corcoran B, Summers KM.\\
+\textbf{Genome-wide analysis of mitral valve disease in Cavalier King Charles Spaniels}.\\
+Under submission. \\[.3cm]
+Theocharidis A, Hemani G, Kargas M, Freeman T.\\
+\textbf{A comparison of CPU and OpenCL parallelization methods for correlation and graph layout algorithms used in the network analysis of high dimensional data}.\\
+Under submission. \\[.3cm]
+Wei W, Hemani G, Hicks AA, Vitart V, Cabrera-Cardenas C, Navarro P, Huffman J, Hayward C, Knott SA, Rudan I, Pramstaller PP, Wild SH, Wilson JF, Campbell H, Hastie N, Wright AF, Haley CS.\\
+\textbf{Characterisation of genome-wide association epistasis signals for serum uric acid in human population isolates.} \\
+\emph{PLoS One} (2011) \emph{In press}. \\[.3cm]
+Hemani G, Theocharidis A, Wei W, Haley CS.\\
+\textbf{EpiGPU: exhaustive pairwise epistasis scans parallelized on consumer level graphics cards}.\\
+\emph{Bioinformatics} (2011) 27 (11): 1462-1465. \\[.3cm]
+Hadjipavlou G, Hemani G, Leach R, Louro B, Nadaf J, Rowe S, de Koning DJ.\\
+\textbf{Extensive QTL and association analyses of the QTLMAS 2009 Data}.\\
+\emph{BMC Proceedings} (2010) 4:S1 11. \\[.3cm]
+}
+
+\setstretch{1.6}
+
+
+\lhead{\emph{Contents}}
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+\lhead{\emph{List of Figures}}
+\listoffigures
+
+
+\lhead{\emph{List of Tables}}
+\listoftables
+
+
+\setstretch{1.4}
+\clearpage
+\lhead{\emph{Symbols}}
+\listofnomenclature{ll}
+{
+%\textbf{SNP} & \textbf{S}ingle \textbf{N}ucleotide \textbf{P}olymorphism \\
+%\textbf{GWAS} & \textbf{G}enome \textbf{W}ide \textbf{A}ssociation \textbf{S}tudy \\
+%\textbf{QTL} & \textbf{Q}uantitative \textbf{T}rait \textbf{L}ocus \\
+%\textbf{GP map} & \textbf{G}enotype-\textbf{P}henotype map \\
+%\textbf{LD} & \textbf{L}inkage \textbf{D}isequilibrium \\
+%\textbf{CPU} & \textbf{C}entral \textbf{P}rocessing \textbf{U}nit \\
+%\textbf{GPU} & \textbf{G}raphics \textbf{P}rocessing \textbf{U}nit \\
+%\textbf{GPGPU} & \textbf{G}eneral \textbf{P}urpose \textbf{G}raphics \textbf{P}rocessing \textbf{U}nit \\
+%\textbf{OLS} & \textbf{O}rdinary \textbf{L}east \textbf{S}quares \\
+%\textbf{LASSO} & \textbf{L}east \textbf{A}bsolute \textbf{S}hrinkage and \textbf{S}election \textbf{O}perator \\
+%\textbf{REML} & \textbf{RE}stricted \textbf{M}aximum \textbf{L}ikelihood \\
+%\textbf{ROCK} & \textbf{RO}bust \textbf{C}lustering using lin\textbf{K}s \\
+%\\
+%$H^2$ & Broad-sense heritability \\
+%$h^2$ & Narrow-sense heritability \\
+%$r^2$ & Correlation coefficient \\
+$x := y$ & $x$ changes to $y$\\
+$\cap$ & Logical AND \\
+$\cup$ & Logical OR \\
+$| x |$ & Absolute value of $x$ \\
+$\lceil x \rceil$ & Round $x$ up to the next integer \\
+$\lfloor x \rfloor$ & Round $x$ down \\
+$O(...)$ & Time complexity of an algorithm \\
+}
+\clearpage
+
+
+\setstretch{1.6}
+\mainmatter
+
+\pagestyle{fancy}
+
+\include{./Chapters/Introduction}
+\include{./Chapters/Results1}
+\include{./Chapters/Results2}
+\include{./Chapters/Results3}
+\include{./Chapters/Results4}
+\include{./Chapters/Discussion}
+
+
+\appendix
+\input{./Appendices/AppendixA}
+
+\backmatter
+
+\setstretch{1}
+\label{Bibliography} \lhead{\emph{Bibliography}}
+\bibliographystyle{natbib}
+\bibliography{thesis}
+\end{document}
